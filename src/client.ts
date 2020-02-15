@@ -55,6 +55,7 @@ export class Client extends EventEmitter {
   public lastResponse?: any;
   public lastResponseHeaders?: IncomingHttpHeaders;
   public lastElapsedTime?: number;
+  public xmlnsInHeader?: string;
 
   private wsdl: WSDL;
   private httpClient: HttpClient;
@@ -88,6 +89,10 @@ export class Client extends EventEmitter {
     }
     soapHeader = this._processSoapHeader(soapHeader, name, namespace, xmlns);
     return this.soapHeaders.push(soapHeader) - 1;
+  }
+
+  public setXmlnsInHeader(xmlnsInHeader: string) {
+    this.xmlnsInHeader = xmlnsInHeader;
   }
 
   public changeSoapHeader(index: any, soapHeader: any, name?: any, namespace?: any, xmlns?: any): void {
@@ -409,7 +414,7 @@ export class Client extends EventEmitter {
       this.wsdl.xmlnsInEnvelope + '>' +
       ((decodedHeaders || this.security) ?
         (
-          '<' + envelopeKey + ':Header' + (this.wsdl.xmlnsInHeader ? (' ' + this.wsdl.xmlnsInHeader) : '') + '>' +
+          '<' + envelopeKey + ':Header' + (this.xmlnsInHeader ? (' ' + this.xmlnsInHeader) : '') + '>' +
           (decodedHeaders ? decodedHeaders : '') +
           (this.security && !this.security.postProcess ? this.security.toXML() : '') +
           '</' + envelopeKey + ':Header>'
